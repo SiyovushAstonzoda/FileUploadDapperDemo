@@ -16,7 +16,7 @@ public class FileUploadController : ControllerBase
     [HttpPost("Upload File")]
     public string UploadFile(IFormFile file)
     {
-        var currentFolder = _webHostEnvironment.ContentRootPath;
+        var currentFolder = _webHostEnvironment.WebRootPath;
 
         return currentFolder;
     }
