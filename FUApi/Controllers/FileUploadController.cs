@@ -18,6 +18,10 @@ public class FileUploadController : ControllerBase
     {
         var currentFolder = _webHostEnvironment.WebRootPath;
         var fullPath = Path.Combine(currentFolder, "images", file.FileName);
-        return fullPath;
+        using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
+             file.CopyTo(stream);
+        }
+            return fullPath;
     }
 }
