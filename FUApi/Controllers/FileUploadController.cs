@@ -6,14 +6,18 @@ namespace FUApi.Controllers;
 [Route("[controller]")]
 public class FileUploadController : ControllerBase 
 {
-    public FileUploadController()
+    private readonly IWebHostEnvironment _webHostEnvironment;
+
+    public FileUploadController(IWebHostEnvironment webHostEnvironment)
     {
-        
+        _webHostEnvironment = webHostEnvironment;
     }
 
     [HttpPost("Upload File")]
     public string UploadFile(IFormFile file)
     {
-        return "Ok";
+        var currentFolder = _webHostEnvironment.ContentRootPath;
+
+        return currentFolder;
     }
 }
