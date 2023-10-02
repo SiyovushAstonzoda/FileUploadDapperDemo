@@ -17,7 +17,7 @@ public class FileUploadController : ControllerBase
     public string UploadFile(IFormFile file)
     {
         var currentFolder = _webHostEnvironment.WebRootPath;
-
-        return currentFolder;
+        var fullPath = Path.Combine(currentFolder, "images", file.FileName);
+        return fullPath;
     }
 }
