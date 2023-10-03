@@ -29,12 +29,27 @@ public class FileUploadController : ControllerBase
     [HttpGet("Get List of Files")]
     public IEnumerable<string> GetListOfFiles()
     {
-        /*var path = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+        var files = new List<string>();
 
-        var listOfFiles = Directory.GetFiles(path);*/
+        var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, "images");
 
-        var listOfFiles = Directory.GetFiles("/Users/Aston/OneDrive/Рабочий стол/C# 2/Dapper/Dapper 6 (File Upload)/FUApi/wwwroot/images");
+        var listOfDirectories = Directory.GetDirectories(fullPath);
 
-        return listOfFiles;
+        foreach(var directory in listOfDirectories) 
+        {
+            files.Add(directory);
+
+            var directoryPath = Path.Combine(fullPath, directory);
+
+            var listOfDirectoryFiles = Directory.GetFiles(directoryPath);
+
+            files.AddRange(listOfDirectoryFiles);
+        }
+
+        var listOfFiles = Directory.GetFiles(fullPath);
+
+        files.AddRange(listOfFiles);
+
+        return files;
     }
 }
