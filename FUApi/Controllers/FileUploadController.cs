@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Domain.Enums;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FUApi.Controllers;
 
@@ -13,11 +14,12 @@ public class FileUploadController : ControllerBase
         _webHostEnvironment = webHostEnvironment;
     }
 
+    //Upload File
     [HttpPost("Upload File")]
     public string UploadFile(IFormFile file)
     {
         var currentFolder = _webHostEnvironment.WebRootPath;
-        var fullPath = Path.Combine(currentFolder, "images", file.FileName);
+        var fullPath = Path.Combine(currentFolder, FolderType.Images, file.FileName);
         //var exists = System.IO.File.Exists(fullPath); 
         using (var stream = new FileStream(fullPath, FileMode.Create))
         {
@@ -26,12 +28,13 @@ public class FileUploadController : ControllerBase
             return fullPath;
     }
 
+    //Get List of Files
     [HttpGet("Get List of Files")]
-    public IEnumerable<string> GetListOfFiles()
+    public IEnumerable<string> GetListOfFiles(string filePath)
     {
         var files = new List<string>();
 
-        var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+        var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, filePath);
 
         var listOfDirectories = Directory.GetDirectories(fullPath);
 

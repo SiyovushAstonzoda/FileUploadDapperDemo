@@ -17,7 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\Nanamin\" />
+    <Folder Include="wwwroot\Images\" />
+    <Folder Include="wwwroot\Others\" />
+    <Folder Include="wwwroot\Videos\" />
   </ItemGroup>
 
 </Project>
