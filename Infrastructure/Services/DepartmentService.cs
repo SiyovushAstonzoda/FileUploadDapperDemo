@@ -18,37 +18,37 @@ public class DepartmentService
     }
 
     //Get all Departments
-    public IEnumerable<GDepartmentDto> GetAllDepartments()
+    public async Task<IEnumerable<GDepartmentDto>> GetAllDepartments()
     {
         using var conn = _context.CreateConnection();
 
         var command = " select d.id, d.name, m.managerid, concat(e.firstname, ' ', e.lastname) as managerfullname, d.filename " +
                       " from departments d " +
-                      " join managers m " +
+                      " left join managers m " +
                       " on d.id = m.departmentid " +
-                      " join employees e " +
+                      " left join employees e " +
                       " on m.managerid = e.id " +
                       " order by d.id;";
 
-        var result = conn.Query<GDepartmentDto>(command);
+        var result = await conn.QueryAsync<GDepartmentDto>(command);
 
         return result;
     }
 
     //Get Department by Id
-    public GDepartmentDto GetDepartmentById(int id)
+    public async Task<GDepartmentDto> GetDepartmentById(int id)
     {
         using var conn = _context.CreateConnection();
 
         var command = " select d.id, d.name, m.managerid, concat(e.firstname, ' ', e.lastname) as managerfullname, d.filename " +
                       " from departments d " +
-                      " join managers m " +
+                      " left join managers m " +
                       " on d.id = m.departmentid " +
-                      " join employees e " +
+                      " left join employees e " +
                       " on m.managerid = e.id " +
                       " where d.id = @Id";
 
-        var result = conn.QuerySingleOrDefault<GDepartmentDto>(command, new
+        var result = await conn.QuerySingleOrDefaultAsync<GDepartmentDto>(command, new
         {
             Id = id
         });
@@ -57,7 +57,7 @@ public class DepartmentService
     }
 
     //Add Department
-    public GDepartmentDto AddDepartment(AUDepartmentDto department)
+    public async Task<GDepartmentDto> AddDepartment(AUDepartmentDto department)
     {
         using var conn = _context.CreateConnection();
 
@@ -70,7 +70,7 @@ public class DepartmentService
                       " values (@Name, @FileName)" +
                       " returning id;";
 
-            fileName = _fileService.CreateFile(FolderType.Images, department.File);
+            fileName = await _fileService.CreateFileAsync(FolderType.Images, department.File);
         }
         else
         {
@@ -79,7 +79,7 @@ public class DepartmentService
                       " returning id;";
         }
 
-        var result = conn.ExecuteScalar<int>(command, new
+        var result = await conn.ExecuteScalarAsync<int>(command, new
         {
             Name = department.Name,
             FileName = fileName
@@ -89,12 +89,14 @@ public class DepartmentService
         {
             Name = department.Name,
             FileName = fileName,
-            Id = result
+            Id = result,
+            ManagerId = 0,
+            ManagerFullname = null
         };
     }
 
     //Update Department
-    public GDepartmentDto UpdateDepartment(AUDepartmentDto department)
+    public async Task<GDepartmentDto> UpdateDepartment(AUDepartmentDto department)
     {
         using var conn = _context.CreateConnection();
 
@@ -105,7 +107,7 @@ public class DepartmentService
             return new GDepartmentDto();
         }
 
-        string fileName = existing.FileName;
+        string fileName = null;
         string command = null;
 
         if(department.File != null)
@@ -115,12 +117,7 @@ public class DepartmentService
                       " where id = @Id " +
                       " returning id;";
 
-            if(fileName != null)
-            {
-                _fileService.DeleteFile(FolderType.Images, fileName);
-            }
-
-            fileName = _fileService.CreateFile(FolderType.Images, department.File);
+            fileName = await _fileService.CreateFileAsync(FolderType.Images, department.File);
         }
         else
         {
@@ -130,7 +127,7 @@ public class DepartmentService
                       " returning id;";
         }
 
-        var result = conn.ExecuteScalar<int>(command, new
+        var result = await conn.ExecuteScalarAsync<int>(command, new
         {
             Name = department.Name,
             FileName = fileName,
@@ -145,7 +142,7 @@ public class DepartmentService
         };
     }
 
-    public GDepartmentDto DeleteDepartment(int id)
+    public async Task<GDepartmentDto> DeleteDepartment(int id)
     {
         using var conn = _context.CreateConnection();
 
@@ -153,9 +150,9 @@ public class DepartmentService
                       " where id = @Id " +
                       " returning id;";
 
-        var deleted = GetDepartmentById(id);
+        var deleted = await GetDepartmentById(id);
 
-        var result = conn.ExecuteScalar<int>(command, new
+        var result = await conn.ExecuteScalarAsync<int>(command, new
         {
             Id = id
         });

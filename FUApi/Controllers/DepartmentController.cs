@@ -16,32 +16,32 @@ public class DepartmentController
     }
 
     [HttpPost("Add Department")]
-    public GDepartmentDto AddDepartment([FromForm] AUDepartmentDto department)
+    public async Task<GDepartmentDto> AddDepartment([FromForm] AUDepartmentDto department)
     {
-        return _departmentService.AddDepartment(department);
+        return await _departmentService.AddDepartment(department);
     }
 
     [HttpPut("Update Department")]
-    public GDepartmentDto UpdateDepartment([FromForm] AUDepartmentDto department)
+    public async Task<GDepartmentDto> UpdateDepartment([FromForm] AUDepartmentDto department)
     {
-        return _departmentService.UpdateDepartment(department);
+        return await _departmentService.UpdateDepartment(department);
     }
 
     [HttpDelete("Delete Department")]
-    public GDepartmentDto DeleteDepartment(int id)
+    public async Task<GDepartmentDto> DeleteDepartment(int id)
     {
-        return _departmentService.DeleteDepartment(id);
+        return await _departmentService.DeleteDepartment(id);
     }
 
     [HttpGet("Get all Departments")]
-    public IEnumerable<GDepartmentDto> GetAllDepartments()
+    public async Task<IEnumerable<GDepartmentDto>> GetAllDepartments()
     {
-        return _departmentService.GetAllDepartments();
+        return await _departmentService.GetAllDepartments();
     }
 
     [HttpGet("Get Department by Id")]
-    public GDepartmentDto GetDepartmentById(int id)
+    public async Task<GDepartmentDto> GetDepartmentById(int id)
     {
-        return _departmentService.GetDepartmentById(id);
+        return await _departmentService.GetDepartmentById(id);
     }
 }

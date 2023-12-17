@@ -18,27 +18,27 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost("Add Employee")]
-    public GEmployeeDto AddEmployee([FromForm] AUEmployeeDto employee)
+    public async Task<GEmployeeDto> AddEmployee([FromForm] AUEmployeeDto employee)
     {
-        return _employeeService.AddEmployee(employee);
+        return await _employeeService.AddEmployee(employee);
     }
 
     [HttpPut("Update Employee")]
-    public GEmployeeDto UpdateEmployee([FromForm] AUEmployeeDto employee)
+    public async Task<GEmployeeDto> UpdateEmployee([FromForm] AUEmployeeDto employee)
     {
-        return _employeeService.UpdateEmployee(employee);
+        return await _employeeService.UpdateEmployee(employee);
     }
 
     [HttpDelete("Delete Employee")]
-    public string DeleteEmployee(int id)
+    public async Task<string> DeleteEmployee(int id)
     {
-        return _employeeService.DeleteEmployee(id); 
+        return await _employeeService.DeleteEmployee(id); 
     }
 
     [HttpGet("Get all Employees")]
-    public IEnumerable<GEmployeeDto> GetListOfEmployees()
+    public async Task<IEnumerable<GEmployeeDto>> GetListOfEmployees()
     {
-        return _employeeService.GetAllEmployees();
+        return await _employeeService.GetAllEmployees();
     }
 
     [HttpGet("Get Employee by Id")]
@@ -54,8 +54,8 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("Get Employee with Department by Id")]
-    public GEmployeeWDepartment GetEmployeeWithDepartmentById(int id)
+    public async Task<GEmployeeWDepartment> GetEmployeeWithDepartmentById(int id)
     {
-        return _employeeService.GetEmployeeWithDepartmentById(id);
+        return await _employeeService.GetEmployeeWithDepartmentById(id);
     }
 }

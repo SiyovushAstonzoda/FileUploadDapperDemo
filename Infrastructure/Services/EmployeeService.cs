@@ -18,14 +18,14 @@ public class EmployeeService
     }
 
     //Get all Employees
-    public IEnumerable<GEmployeeDto> GetAllEmployees()
+    public async Task<IEnumerable<GEmployeeDto>> GetAllEmployees()
     {
         using var conn = _context.CreateConnection();
         
         var command = " select * " +
                       " from employees;";
 
-        var result = conn.Query<GEmployeeDto>(command);
+        var result = await conn.QueryAsync<GEmployeeDto>(command);
 
         return result;
     }
@@ -65,7 +65,7 @@ public class EmployeeService
     }
 
     //Get Employee with Department by Id
-    public GEmployeeWDepartment GetEmployeeWithDepartmentById(int id)
+    public async Task<GEmployeeWDepartment> GetEmployeeWithDepartmentById(int id)
     {
         using var conn = _context.CreateConnection();
 
@@ -77,7 +77,7 @@ public class EmployeeService
                       " on de.departmentid = d.id " +
                       " where e.id = @Id;";
 
-        var result = conn.QuerySingleOrDefault<GEmployeeWDepartment>(command, new
+        var result = await conn.QuerySingleOrDefaultAsync<GEmployeeWDepartment>(command, new
         {
             Id = id
         });
@@ -86,7 +86,7 @@ public class EmployeeService
     }
 
     //Add Employee
-    public GEmployeeDto AddEmployee(AUEmployeeDto employee)
+    public async Task<GEmployeeDto> AddEmployee(AUEmployeeDto employee)
     {
         using var conn = _context.CreateConnection();
 
@@ -99,7 +99,7 @@ public class EmployeeService
                       " values (@BirthDate, @FirstName, @LastName, @Gender, @HireDate, @FileName) " +
                       " returning id;";
 
-            fileName = _fileService.CreateFile(FolderType.Images, employee.File);
+            fileName = await _fileService.CreateFileAsync(FolderType.Images, employee.File);
         }
         else
         {
@@ -108,7 +108,7 @@ public class EmployeeService
                       " returning id;";
         }
 
-        var result = conn.ExecuteScalar<int>(command, new
+        var result = await conn.ExecuteScalarAsync<int>(command, new
         {
             BirthDate = employee.BirthDate,
             FirstName = employee.FirstName,
@@ -131,7 +131,7 @@ public class EmployeeService
     }
 
     //Update Employee
-    public GEmployeeDto UpdateEmployee(AUEmployeeDto employee)
+    public async Task<GEmployeeDto> UpdateEmployee(AUEmployeeDto employee)
     {
         using var conn = _context.CreateConnection();
 
@@ -155,7 +155,7 @@ public class EmployeeService
             {
                 _fileService.DeleteFile(FolderType.Images, fileName);
             }
-                fileName = _fileService.CreateFile(FolderType.Images, employee.File);
+                fileName = await _fileService.CreateFileAsync(FolderType.Images, employee.File);
         }
         else
         {
@@ -165,7 +165,7 @@ public class EmployeeService
                   " returning id;";
         }
 
-        var result = conn.ExecuteScalar<int>(sql, new
+        var result = await conn.ExecuteScalarAsync<int>(sql, new
         {
             BirthDate = employee.BirthDate,
             FirstName = employee.FirstName,
@@ -189,7 +189,7 @@ public class EmployeeService
     }
     
     //Delete Employee
-    public string DeleteEmployee(int id)
+    public async Task<string> DeleteEmployee(int id)
     {
         using var conn = _context.CreateConnection();
 
@@ -197,7 +197,7 @@ public class EmployeeService
                       " where id = @Id" +
                       " returning id;";
 
-        var result = conn.ExecuteScalar<int>(command, new
+        var result = await conn.ExecuteScalarAsync<int>(command, new
         {
             Id = id
         });

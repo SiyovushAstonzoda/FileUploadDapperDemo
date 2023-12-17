@@ -18,20 +18,20 @@ public class SalaryService
     }
 
     //Get all Salaries
-    public IEnumerable<GSalaryDto> GetAllSalaries()
+    public async Task<IEnumerable<GSalaryDto>> GetAllSalaries()
     {
         using var conn = _context.CreateConnection();
 
         var command = " select * " +
                       " from salaries;";
 
-        var result = conn.Query<GSalaryDto>(command);
+        var result = await conn.QueryAsync<GSalaryDto>(command);
 
         return result;
     }
 
     //Get Salary by Id
-    public GSalaryDto GetSalaryById(int id) 
+    public async Task<GSalaryDto> GetSalaryById(int id) 
     {
         using var conn = _context.CreateConnection();
 
@@ -39,7 +39,7 @@ public class SalaryService
                       " from salaries " +
                       " where id = @Id;";
 
-        var result = conn.QuerySingleOrDefault<GSalaryDto>(command, new
+        var result = await conn.QuerySingleOrDefaultAsync<GSalaryDto>(command, new
         {
             Id = id
         });
@@ -48,7 +48,7 @@ public class SalaryService
     }
 
     //Add Salary
-    public GSalaryDto AddSalary(AUSalaryDto salary)
+    public async Task<GSalaryDto> AddSalary(AUSalaryDto salary)
     {
         using var conn = _context.CreateConnection();
 
@@ -61,7 +61,7 @@ public class SalaryService
                       " values (@Amount, @FromDate, @ToDate, @EmployeeId, @FileName) " +
                       " returning id;";
 
-            fileName = _fileService.CreateFile(FolderType.Images, salary.File);
+            fileName = await _fileService.CreateFileAsync(FolderType.Images, salary.File);
         }
         else
         {
@@ -70,7 +70,7 @@ public class SalaryService
                       " returning id;";
         }
 
-        var result = conn.ExecuteScalar<int>(command, new
+        var result = await conn.ExecuteScalarAsync<int>(command, new
         {
             Amount = salary.Amount,
             FromDate = salary.FromDate,
@@ -91,18 +91,18 @@ public class SalaryService
     }
 
     //Update Salary
-    public GSalaryDto UpdateSalary(AUSalaryDto salary) 
+    public async Task<GSalaryDto> UpdateSalary(AUSalaryDto salary) 
     {
         using var conn = _context.CreateConnection();
 
         //Existing in DB using GetSalaryById
-        var existing = GetSalaryById(salary.Id);
+        var existing = await GetSalaryById(salary.Id);
         if (existing == null)
         {
             return new GSalaryDto();
         }
 
-        string fileName = existing.FileName;
+        string fileName = null;
         string command = null;
         if (salary.File != null)
         {
@@ -116,7 +116,7 @@ public class SalaryService
                 _fileService.DeleteFile(FolderType.Images, fileName);
             }
 
-            fileName = _fileService.CreateFile(FolderType.Images, salary.File);
+            fileName = await _fileService.CreateFileAsync(FolderType.Images, salary.File);
         }
         else
         {
@@ -126,7 +126,7 @@ public class SalaryService
                       " returning id;";
         }
 
-        var result = conn.ExecuteScalar<int>(command, new
+        var result = await conn.ExecuteScalarAsync<int>(command, new
         {
             Amount = salary.Amount,
             FromDate = salary.FromDate,
@@ -148,7 +148,7 @@ public class SalaryService
     }
 
     //Delete Salary
-    public string DeleteSalary(int id)
+    public async Task<string> DeleteSalary(int id)
     {
         using var conn = _context.CreateConnection();
 
@@ -156,7 +156,7 @@ public class SalaryService
                       " where id = @Id" +
                       " returning id;";
 
-        var result = conn.ExecuteScalar<int>(command, new
+        var result = await conn.ExecuteScalarAsync<int>(command, new
         {
             Id = id
         });

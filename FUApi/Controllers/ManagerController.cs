@@ -16,32 +16,32 @@ public class ManagerController : ControllerBase
     }
 
     [HttpPost("Add Manager")]
-    public GManagerDto AddManager([FromForm] AManagerDto manager)
+    public async Task<GManagerDto> AddManager([FromForm] AManagerDto manager)
     {
-        return _managerService.AddManager(manager);
+        return await _managerService.AddManager(manager);
     }
 
     [HttpPut("Update Manager")]
-    public GManagerDto UpdateManager([FromForm] UManagerDto manager) 
+    public async Task<GManagerDto> UpdateManager([FromForm] UManagerDto manager) 
     {
-        return _managerService.UpdateManager(manager);
+        return await _managerService.UpdateManager(manager);
     }
 
     [HttpDelete("Delete Manager")]
-    public GManagerDto DeleteManager(int managerId, int departmentId) 
+    public async Task<GManagerDto> DeleteManager(int managerId, int departmentId) 
     {
-        return _managerService.DeleteManager(managerId, departmentId);
+        return await _managerService.DeleteManager(managerId, departmentId);
     }
 
     [HttpGet("Get all Managers")]
-    public IEnumerable<GManagerDto> GetAllManagers()
+    public async Task<IEnumerable<GManagerDto>> GetAllManagers()
     {
-        return _managerService.GetAllManagers();
+        return await _managerService.GetAllManagers();
     }
 
     [HttpGet("Get Manager by Id")]
-    public GManagerDto GetManagerById(int managerId, int departmentId) 
+    public async Task<GManagerDto> GetManagerById(int managerId, int departmentId) 
     {
-        return _managerService.GetManagerById(managerId, departmentId);
+        return await _managerService.GetManagerById(managerId, departmentId);
     }
 }

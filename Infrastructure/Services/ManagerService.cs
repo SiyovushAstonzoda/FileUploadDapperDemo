@@ -17,7 +17,7 @@ public class ManagerService
     }
 
     //Get all Managers
-    public IEnumerable<GManagerDto> GetAllManagers()
+    public async Task<IEnumerable<GManagerDto>> GetAllManagers()
     {
         using var conn = _context.CreateConnection();
 
@@ -28,13 +28,13 @@ public class ManagerService
                       " join departments d " +
                       " on m.departmentid = d.id;";
 
-        var result = conn.Query<GManagerDto>(command);
+        var result = await conn.QueryAsync<GManagerDto>(command);
 
         return result;
     }
 
     //Get Manager by Id
-    public GManagerDto GetManagerById(int managerId, int departmentId)
+    public async Task<GManagerDto> GetManagerById(int managerId, int departmentId)
     {
         using var conn = _context.CreateConnection();
 
@@ -46,7 +46,7 @@ public class ManagerService
                       " on m.departmentid = d.id " +
                       " where m.managerid = @ManagerId and m.departmentid = @DepartmentId;";
 
-        var result = conn.QuerySingleOrDefault<GManagerDto>(command, new
+        var result = await conn.QuerySingleOrDefaultAsync<GManagerDto>(command, new
         {
             ManagerId = managerId,
             DepartmentId = departmentId
@@ -56,7 +56,7 @@ public class ManagerService
     }
 
     //Add Manager
-    public GManagerDto AddManager(AManagerDto manager) 
+    public async Task<GManagerDto> AddManager(AManagerDto manager) 
     {
         using var conn = _context.CreateConnection();
 
@@ -75,7 +75,7 @@ public class ManagerService
                       " values (@ManagerId, @DepartmentId, @FromDate);";
         }
 
-        conn.Execute(command, new
+        await conn.ExecuteAsync(command, new
         {
             ManagerId = manager.ManagerId,
             DepartmentId = manager.DepartmentId,
@@ -83,7 +83,7 @@ public class ManagerService
             ToDate = manager.ToDate,
         });
 
-        return GetManagerById(manager.ManagerId, manager.DepartmentId);
+        return await GetManagerById(manager.ManagerId, manager.DepartmentId);
         /*return new GManagerDto
         {
             ManagerId = manager.ManagerId,
@@ -94,7 +94,7 @@ public class ManagerService
     }
 
     //Update Manager
-    public GManagerDto UpdateManager(UManagerDto manager)
+    public async Task<GManagerDto> UpdateManager(UManagerDto manager)
     {
         using var conn = _context.CreateConnection();
 
@@ -113,7 +113,7 @@ public class ManagerService
                       " where managerid = @ManagerId and departmentid = @DepartmentId;";
         }
 
-        conn.Execute(command, new
+        await conn.ExecuteAsync(command, new
         {
             NewManagerId = manager.NewManagerId,
             NewDepartmentId = manager.NewDepartmentId,
@@ -126,20 +126,20 @@ public class ManagerService
         manager.ManagerId = manager.NewManagerId;
         manager.DepartmentId = manager.NewDepartmentId;
 
-        return GetManagerById(manager.ManagerId, manager.DepartmentId);
+        return await GetManagerById(manager.ManagerId, manager.DepartmentId);
     }
 
     //Delete Manager
-    public GManagerDto DeleteManager(int managerId, int departmentId)
+    public async Task<GManagerDto> DeleteManager(int managerId, int departmentId)
     {
         using var conn = _context.CreateConnection();
 
         var command = " delete from managers " +
                       " where managerid = @ManagerId and departmentid = @DepartmentId;";
 
-        var deleted = GetManagerById(managerId, departmentId);
+        var deleted = await GetManagerById(managerId, departmentId);
 
-        conn.Execute(command, new
+        await conn.ExecuteAsync(command, new
         {
             ManagerId = managerId,
             DepartmentId = departmentId

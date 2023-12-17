@@ -13,12 +13,12 @@ public class FileService : IFileService
         _webHostEnvironment = webHostEnvironment;
     }
 
-    public string CreateFile(string folderName, IFormFile file)
+    public async Task<string> CreateFileAsync(string folderName, IFormFile file)
     {
         var fileName = Guid.NewGuid().ToString()+Path.GetExtension(file.FileName);
         var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, folderName, fileName);
         using var stream = new FileStream(fullPath, FileMode.Create);
-        file.CopyTo(stream);
+        await file.CopyToAsync(stream);
         return fileName;
     }
 

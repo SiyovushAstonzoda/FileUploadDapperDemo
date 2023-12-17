@@ -16,32 +16,32 @@ public class SalaryController : ControllerBase
     }
 
     [HttpPost("Add Salary")]
-    public GSalaryDto AddSalary([FromForm] AUSalaryDto salary)
+    public async Task<GSalaryDto> AddSalary([FromForm] AUSalaryDto salary)
     {
-        return _salaryService.AddSalary(salary);
+        return await _salaryService.AddSalary(salary);
     }
 
     [HttpPut("Update Salary")]
-    public GSalaryDto UpdateSalary([FromForm] AUSalaryDto salary)
+    public async Task<GSalaryDto> UpdateSalary([FromForm] AUSalaryDto salary)
     {
-        return _salaryService.UpdateSalary(salary);
+        return await _salaryService.UpdateSalary(salary);
     }
 
     [HttpDelete("Delete Salary")]
-    public string DeleteSalary(int id)
+    public async Task<string> DeleteSalary(int id)
     {
-        return _salaryService.DeleteSalary(id);
+        return await _salaryService.DeleteSalary(id);
     }
 
     [HttpGet("Get all Salaries")]
-    public IEnumerable<GSalaryDto> GetAllSalaries()
+    public async Task<IEnumerable<GSalaryDto>> GetAllSalaries()
     {
-        return _salaryService.GetAllSalaries();
+        return await _salaryService.GetAllSalaries();
     }
 
     [HttpGet("Get Salary by Id")]
-    public GSalaryDto GetSalaryById(int id)
+    public async Task<GSalaryDto> GetSalaryById(int id)
     {
-        return _salaryService.GetSalaryById(id);
+        return await _salaryService.GetSalaryById(id);
     }
 }
